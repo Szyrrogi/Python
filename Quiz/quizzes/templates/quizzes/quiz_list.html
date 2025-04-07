@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Formularz wyszukiwania -->
+    <div class="search-box">
+        <form method="get" action="." class="search-form">
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ request.GET.q }}" 
+                placeholder="Wpisz tytuł quizu..." 
+                class="search-input"
+            >
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search"></i> Szukaj
+            </button>
+            {% if request.GET.q %}
+                <a href="{% url 'quizzes:quiz_list' %}" class="reset-btn">
+                    <i class="fas fa-times"></i> Wyczyść
+                </a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Lista quizów -->
+    <div class="quiz-list">
+        {% if quizzes %}
+            {% for quiz in quizzes %}
+            <div class="quiz-card">
+                <h3>{{ quiz.title }}</h3>
+                <p class="description">{{ quiz.description|truncatechars:100 }}</p>
+                <div class="meta">
+                    <span class="author">Autor: {{ quiz.created_by.username }}</span>
+                    <span class="date">{{ quiz.created_at|date:"d.m.Y" }}</span>
+                </div>
+                <a href="{% url 'quizzes:quiz_detail' quiz.id %}" class="btn">
+                    Rozwiąż quiz
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-results">Brak quizów spełniających kryteria wyszukiwania</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Wyszukiwarka */
+.search-box {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.search-btn, .reset-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.reset-btn {
+    background: #f44336;
+    color: white;
+    text-decoration: none;
+}
+
+/* Lista quizów */
+.quiz-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.quiz-card {
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.quiz-card h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.description {
+    color: #666;
+    margin: 10px 0;
+}
+
+.meta {
+    display: flex;
+    justify-content: space-between;
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 18px;
+}
+</style>
+{% endblock %}
